@@ -1,0 +1,8 @@
+numpy
+pandas
+scikit-learn
+joblib
+flask
+# Optional (enables the real Transformer branch; without them a TF-IDF fallback is used)
+torch
+transformers

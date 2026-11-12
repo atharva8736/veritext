@@ -1,0 +1,23 @@
+{% from "_i.html" import ic, mark %}
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}Veritext{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head><body>
+<div class="app">
+<aside class="side">
+ <div class="brand">{{ mark(34) }}<div><b>Veritext</b><small>AI text detection</small></div></div>
+ <nav class="nav">
+  <a href="{{ url_for('dashboard') }}" class="{{ 'on' if active=='home' }}">{{ ic('home') }}Dashboard</a>
+  <a href="{{ url_for('analyze') }}" class="{{ 'on' if active=='scan' }}">{{ ic('scan') }}New analysis</a>
+  <a href="{{ url_for('history') }}" class="{{ 'on' if active=='history' }}">{{ ic('history') }}History</a>
+  <a href="{{ url_for('settings') }}" class="{{ 'on' if active=='settings' }}">{{ ic('settings') }}Settings &amp; About</a>
+ </nav>
+ <div class="me"><div class="av">{{ g.user['name']|initials }}</div><div><div style="font-weight:500">{{ g.user['name'] }}</div><div class="muted" style="font-size:13px">Student</div></div></div>
+</aside>
+<main class="main">
+ {% for m in get_flashed_messages() %}<div class="flash" role="alert">{{ m }}</div>{% endfor %}
+ {% block body %}{% endblock %}
+</main></div></body></html>

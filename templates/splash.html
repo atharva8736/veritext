@@ -1,0 +1,7 @@
+{% from "_i.html" import mark %}
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Veritext</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
+<body><div class="splash">{{ mark(88,'#fff','#14213D') }}<h1>Veritext</h1><p>Find out whether a text was written by a person or by AI.</p>
+<div class="load"><div></div></div><a href="{{ url_for('login') }}"><small>Generative AI &amp; NLP project &middot; Athrav Singh</small></a></div>
+<script>setTimeout(function(){location.href="{{ url_for('login') }}"},2600)</script></body></html>

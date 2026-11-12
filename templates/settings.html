@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% from "_i.html" import ic, mark %}
+{% block title %}Settings · Veritext{% endblock %}
+{% block body %}
+<div class="head"><div><h1>Settings &amp; About</h1><p>Preferences and project information.</p></div></div>
+<div class="grid2" style="grid-template-columns:1fr 1.15fr">
+ <form method="post" class="card pad" style="display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;gap:16px;padding-bottom:18px;border-bottom:1px solid var(--line)"><div class="av" style="width:56px;height:56px;font-size:18px">{{ g.user['name']|initials }}</div><div><div style="font-size:18px;font-weight:600">{{ g.user['name'] }}</div><div class="muted">{{ g.user['email'] }}</div></div></div>
+  <div class="set"><div><b style="font-weight:500">Default mode</b><small>Used when you open a new analysis</small></div>
+   <select name="mode" aria-label="Default mode">{% for k,l in [('fusion','Fusion'),('stylometric','Stylometric'),('transformer','Transformer')] %}<option value="{{ k }}" {{ 'selected' if g.user['mode']==k }}>{{ l }}</option>{% endfor %}</select></div>
+  <div class="set"><div><b style="font-weight:500">AI threshold (%)</b><small>Centre point between human and AI (30 to 70)</small></div><input type="number" name="thr" min="30" max="70" value="{{ g.user['thr'] }}" aria-label="AI threshold" style="width:90px"></div>
+  <div style="display:flex;gap:12px;margin-top:24px"><button class="btn" type="submit">{{ ic('check',18) }}Save settings</button><a class="btn s" href="{{ url_for('logout') }}">{{ ic('logout',18) }}Sign out</a></div></form>
+ <div class="card pad"><div style="display:flex;align-items:center;gap:14px">{{ mark(44) }}<div><div class="muted" style="font-size:12px;font-weight:500;letter-spacing:.6px">ABOUT THIS PROJECT</div><div style="font-size:19px;font-weight:600;line-height:1.25">AI-Generated Text Detection Using Stylometric and Transformer-Based Feature Fusion</div></div></div>
+  <div style="display:flex;gap:32px;font-size:14px;margin:20px 0;flex-wrap:wrap"><div><div class="muted">Domain</div><b style="font-weight:500">Generative AI &amp; NLP</b></div><div><div class="muted">Student</div><b style="font-weight:500">Athrav Singh</b></div><div><div class="muted">Model backend</div><b style="font-weight:500">{{ 'DistilBERT + GPT-2' if backend=='transformer' else 'TF-IDF fallback' }}</b></div></div>
+  <div style="height:1px;background:var(--line)"></div>
+  <div class="stp"><div class="num">1</div><div><b>Stylometric features</b><small>Sentence length, vocabulary, punctuation and formal linking words.</small></div></div>
+  <div class="stp"><div class="num">2</div><div><b>Transformer features</b><small>DistilBERT embeddings and GPT-2 predictability.</small></div></div>
+  <div class="stp"><div class="num">3</div><div><b>Feature fusion</b><small>Both are combined and a classifier gives Human or AI.</small></div></div></div>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}{% from "_i.html" import ic %}
+{% block title %}New analysis · Veritext{% endblock %}
+{% block body %}
+<div class="head"><div><h1>New analysis</h1><p>Paste or upload the text you want to check.</p></div></div>
+<form method="post" enctype="multipart/form-data" class="grid2" id="f">
+ <div class="card" style="display:flex;flex-direction:column">
+  <div class="bar"><button type="button" class="btn s" style="height:40px" id="paste">{{ ic('file',18) }}Paste</button>
+   <label class="btn s" style="height:40px;cursor:pointer">{{ ic('upload',18) }}Upload .txt / .docx<input type="file" name="file" id="file" accept=".txt,.docx" hidden></label>
+   <button type="button" class="btn s" style="height:40px" id="clear">{{ ic('trash',18) }}Clear</button><span id="fname" class="muted"></span></div>
+  <textarea class="big" name="text" id="text" aria-label="Text to analyze" placeholder="Paste your text here...">{{ text }}</textarea>
+  <div class="foot"><span>.txt and .docx files supported</span><span class="mono" id="wc">0 words</span></div></div>
+ <div class="stack">
+  <div class="card pad stack12"><div class="ct" style="margin-bottom:2px">Detection mode</div>
+   {% for k,t,d in [('stylometric','Stylometric only','Writing style measurements'),('transformer','Transformer only','Language-model patterns'),('fusion','Fusion (recommended)','Style and transformer combined')] %}
+   <label class="mode"><input type="radio" name="mode" value="{{ k }}" {{ 'checked' if mode==k }}><span><b>{{ t }}</b><small>{{ d }}</small></span></label>{% endfor %}</div>
+  <div class="card pad" style="display:flex;justify-content:space-between"><b style="font-weight:500">Language</b><span class="muted">English</span></div>
+  <button class="btn big" type="submit">{{ ic('scan',20) }}Analyze text</button></div>
+</form>
+<script>
+var t=document.getElementById('text'),wc=document.getElementById('wc');
+function c(){var n=(t.value.trim().match(/\S+/g)||[]).length;wc.textContent=n+' words'}t.addEventListener('input',c);c();
+document.getElementById('clear').onclick=function(){t.value='';c()};
+document.getElementById('paste').onclick=function(){if(navigator.clipboard&&navigator.clipboard.readText){navigator.clipboard.readText().then(function(s){t.value=s;c()}).catch(function(){t.focus()})}else{t.focus()}};
+document.getElementById('file').onchange=function(){document.getElementById('fname').textContent=this.files[0]?this.files[0].name:''};
+</script>
+{% endblock %}

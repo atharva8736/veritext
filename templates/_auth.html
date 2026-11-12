@@ -1,0 +1,12 @@
+{% from "_i.html" import mark %}
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{% block t %}{% endblock %} · Veritext</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head><body>
+<div class="auth">
+<section class="l"><div class="brand">{{ mark(36,'#fff','#14213D') }}<b style="font-size:22px">Veritext</b></div>
+<div><h2>Human or AI? Get a clear answer in seconds.</h2>
+<div class="st"><div class="n">1</div><div><b>Read the text</b><small>You paste or upload any essay or article.</small></div></div>
+<div class="st"><div class="n">2</div><div><b>Measure two things</b><small>Writing style, and deeper language patterns.</small></div></div>
+<div class="st"><div class="n">3</div><div><b>Combine and decide</b><small>Both results are fused into one verdict.</small></div></div></div>
+<small style="color:#A9B4CA">Stylometric and transformer-based feature fusion</small></section>
+<section class="r">{% block form %}{% endblock %}</section></div></body></html>

@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% from "_i.html" import ic, chip %}
+{% block title %}History · Veritext{% endblock %}
+{% block body %}
+<div class="head"><div><h1>History</h1><p>Every text you have checked.</p></div></div>
+<form class="filters" method="get"><label class="search">{{ ic('search') }}<input type="search" name="q" value="{{ q }}" placeholder="Search your checks" aria-label="Search your checks"></label>
+{% if v!='all' %}<input type="hidden" name="v" value="{{ v }}">{% endif %}
+{% for k,l in [('all','All'),('ai','AI-generated'),('hu','Human-written'),('mix','Mixed')] %}<a class="pill {{ 'on' if v==k }}" href="{{ url_for('history', v=k, q=q) }}">{{ l }}</a>{% endfor %}</form>
+<div class="card"><div class="row th"><div class="c1">TEXT</div><div class="c2">SOURCE</div><div class="c3">VERDICT</div><div class="c4">AI SCORE</div><div class="c4">DATE</div><div style="width:40px"></div></div>
+{% for r in rows %}<div class="row"><a class="c1" href="{{ url_for('result', cid=r['id']) }}">{{ ic('file',18) }}<span>{{ r['title'] }}</span></a><div class="c2">{{ r['source'] }}</div><div class="c3">{{ chip(r['verdict']) }}</div><div class="c4 mono" style="color:var(--ink)">{{ r['p_ai']|pct }}%</div><div class="c4">{{ r['created']|when }}</div>
+<form method="post" action="{{ url_for('delete', cid=r['id']) }}"><button class="x" aria-label="Delete {{ r['title'] }}" title="Delete">{{ ic('trash',18) }}</button></form></div>
+{% else %}<div class="row muted" style="min-height:90px">Nothing here yet.</div>{% endfor %}</div>
+{% endblock %}

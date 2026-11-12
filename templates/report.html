@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% from "_i.html" import ic %}
+{% block title %}Report · Veritext{% endblock %}
+{% block body %}
+{% set p = (r['p_ai']*100)|round|int %}
+<div class="head"><div><h1>Detailed report</h1><p>Why Veritext reached this verdict &middot; {{ r['title'] }}</p></div>
+<div class="acts"><button class="btn s" onclick="window.print()">{{ ic('download',18) }}Export PDF</button><a class="btn" href="{{ url_for('dashboard') }}">{{ ic('check',18) }}Done</a></div></div>
+<div class="grid2" style="grid-template-columns:1.5fr 1fr">
+ <div class="card pad"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap"><span class="ct">Stylometric signals</span><span class="muted" style="font-size:13px">Human-like &larr; this text &rarr; AI-like</span></div>
+  <div style="margin-top:8px">{% for f in a.features %}<div class="feat"><div class="n">{{ f.label }}</div><div class="v mono">{{ f.value }}</div><div class="scale"><i style="left:{{ f.pos }}%"></i></div></div>{% endfor %}</div></div>
+ <div class="stack">
+  <div class="card pad stack12"><div class="ct">Transformer signals</div>
+   <div class="box"><b style="font-weight:500">Transformer-branch score</b><span class="mono" style="color:var(--aid)">{{ a.scores['transformer'] }}%</span></div>
+   <div class="box"><b style="font-weight:500">Backend</b><span class="mono" style="font-size:13px">{{ 'DistilBERT + GPT-2' if a.backend=='transformer' else 'TF-IDF fallback' }}</span></div></div>
+  <div class="card pad stack12"><div class="ct">How the result was fused</div>
+   <div class="box"><b style="font-weight:500">Stylometric score</b><span class="mono muted">{{ a.scores['stylometric'] }}%</span></div>
+   <div class="box"><b style="font-weight:500">Transformer score</b><span class="mono muted">{{ a.scores['transformer'] }}%</span></div>
+   <div class="muted" style="text-align:center;font-size:13px">combined by the classifier</div>
+   <div class="fin" style="background:{{ 'var(--ait)' if r['verdict']=='ai' else 'var(--humt)' if r['verdict']=='hu' else 'var(--mix)' }};color:{{ 'var(--aid)' if r['verdict']=='ai' else 'var(--humd)' if r['verdict']=='hu' else 'var(--mixd)' }}">
+    <span>Final: {{ {'ai':'AI-generated','hu':'Human-written','mix':'Mixed'}[r['verdict']] }}</span><span class="mono" style="font-size:20px">{{ p }}% AI</span></div></div>
+ </div></div>
+{% endblock %}

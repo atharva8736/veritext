@@ -1,0 +1,11 @@
+{% extends "_auth.html" %}{% from "_i.html" import ic %}
+{% block t %}Sign in{% endblock %}
+{% block form %}<form method="post">
+<div><h1>Sign in</h1><p class="muted" style="margin-top:6px">Welcome back. Enter your details to continue.</p></div>
+{% for m in get_flashed_messages() %}<div class="flash" role="alert">{{ m }}</div>{% endfor %}
+<label class="f">Email<span class="in">{{ ic('mail') }}<input type="email" name="email" placeholder="name@college.edu" required></span></label>
+<label class="f">Password<span class="in">{{ ic('lock') }}<input type="password" name="password" placeholder="Enter your password" required></span></label>
+<button class="btn big" type="submit">Sign in {{ ic('arrow',18) }}</button>
+<div class="muted" style="text-align:center">New here? <a href="{{ url_for('register') }}" style="color:var(--humd);font-weight:500">Create an account</a></div>
+<div class="demo">Demo account: athrav@demo.com / demo1234</div>
+</form>{% endblock %}

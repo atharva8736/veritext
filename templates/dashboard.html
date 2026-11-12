@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% from "_i.html" import ic, chip %}
+{% block title %}Dashboard · Veritext{% endblock %}
+{% block body %}
+<div class="head"><div><h1>Welcome back, {{ g.user['name'].split()[0] }}</h1><p>Check a text or open one of your recent results.</p></div>
+<div class="acts"><a class="btn" href="{{ url_for('analyze') }}">{{ ic('plus',18) }}New analysis</a></div></div>
+<div class="grid2">
+ <div class="card pad"><div class="ct">Check a text</div>
+  <div class="drop">Paste an essay, article or any passage to see if it reads as human or AI.</div>
+  <div class="acts" style="justify-content:space-between"><div class="acts"><a class="btn s" href="{{ url_for('analyze') }}">Paste text</a><a class="btn s" href="{{ url_for('analyze') }}">{{ ic('upload',18) }}Upload file</a></div><a class="btn" href="{{ url_for('analyze') }}">Analyze text {{ ic('arrow',18) }}</a></div></div>
+ <div class="card pad"><div class="ct" style="margin-bottom:4px">Your activity</div>
+  <div class="stat"><span class="muted">Texts checked</span><b>{{ stats.total }}</b></div>
+  <div class="stat"><span class="muted">Flagged as AI</span><b>{{ stats.ai }}</b></div>
+  <div class="stat"><span class="muted">Average confidence</span><b>{{ stats.conf }}%</b></div></div>
+</div>
+<div class="card"><div class="row" style="min-height:62px"><span class="ct" style="flex:1">Recent checks</span><a href="{{ url_for('history') }}" style="color:var(--humd);font-weight:500">View all</a></div>
+ {% for r in rows %}<a class="row" href="{{ url_for('result', cid=r['id']) }}"><div class="c1">{{ ic('file',18) }}<span>{{ r['title'] }}</span></div><div class="c2">{{ r['source'] }}</div><div class="c3">{{ chip(r['verdict']) }}</div><div class="c4" style="text-align:right">{{ r['created']|when }}</div></a>
+ {% else %}<div class="row muted" style="min-height:80px">No checks yet. Run your first analysis above.</div>{% endfor %}</div>
+{% endblock %}
