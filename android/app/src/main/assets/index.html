@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Veritext – AI text detection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap">
+<style>
+:root{--navy:#14213D;--ink:#17202B;--muted:#566070;--line:#E2E0D8;--bg:#F4F3EF;--surf:#fff;--hum:#1F5FA8;--humt:#DCE8F5;--humd:#174A82;--ai:#B8501A;--ait:#FBEBDD;--aid:#8F3A0E;--mix:#EFE9D2;--mixd:#5E4F0C;--bd:#CFCCC1}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 'IBM Plex Sans',system-ui,sans-serif}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,p{margin:0}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.muted{color:var(--muted)}
+svg{flex:none}
+/* shell */
+.app{display:flex;min-height:100vh}
+.side{width:248px;flex:none;background:var(--surf);border-right:1px solid var(--line);padding:28px 16px;display:flex;flex-direction:column;gap:28px;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:12px;padding:0 6px}
+.brand b{font-size:19px;font-weight:600;letter-spacing:-.2px;display:block}
+.brand small{font-size:12px;color:var(--muted)}
+.nav{display:flex;flex-direction:column;gap:6px;flex:1}
+.nav a{display:flex;align-items:center;gap:12px;height:48px;padding:0 14px;border-radius:10px;font-weight:500}
+.nav a:hover{background:var(--bg)}
+.nav a.on{background:var(--navy);color:#fff}
+.me{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--line);border-radius:12px}
+.av{width:40px;height:40px;border-radius:50%;background:var(--humt);color:var(--humd);display:flex;align-items:center;justify-content:center;font-weight:600;flex:none}
+.main{flex:1;min-width:0;padding:32px 40px;display:flex;flex-direction:column;gap:24px}
+.head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.head h1{font-size:28px;font-weight:600;letter-spacing:-.4px}
+.head p{color:var(--muted);margin-top:4px}
+.acts{display:flex;gap:12px;flex-wrap:wrap}
+/* parts */
+.card{background:var(--surf);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.pad{padding:22px 24px}
+.ct{font-size:17px;font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:46px;padding:0 20px;border-radius:10px;font:500 15px inherit;font-family:inherit;border:1px solid var(--navy);background:var(--navy);color:#fff;cursor:pointer}
+.btn:hover{opacity:.92}
+.btn.s{background:#fff;color:var(--ink);border-color:var(--bd)}
+.btn.big{height:56px;font-size:17px;width:100%}
+.chip{display:inline-flex;align-items:center;height:28px;padding:0 12px;border-radius:14px;font-size:13px;font-weight:500}
+.chip.ai{background:var(--ait);color:var(--aid)}.chip.hu{background:var(--humt);color:var(--humd)}.chip.mix{background:var(--mix);color:var(--mixd)}
+.row{display:flex;align-items:center;gap:16px;min-height:54px;padding:0 24px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row>.c1{flex:2.5;display:flex;align-items:center;gap:12px;font-weight:500;min-width:0}
+.row>.c1 span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row>.c2{flex:1;color:var(--muted)}.row>.c3{flex:1.2}.row>.c4{flex:.8;color:var(--muted)}
+a.row:hover{background:#FAF9F6}
+.th{font-size:13px;font-weight:500;color:var(--muted);min-height:44px}
+.flash{padding:12px 16px;border-radius:10px;background:var(--ait);color:var(--aid);font-weight:500}
+.grid2{display:grid;gap:24px;grid-template-columns:1.6fr 1fr}
+/* dashboard */
+.stat{display:flex;justify-content:space-between;align-items:baseline;padding:16px 0;border-bottom:1px solid var(--line)}
+.stat:last-child{border:0}.stat b{font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:500}
+.drop{border:1px dashed #BDBAAE;border-radius:10px;padding:16px;color:var(--muted);background:var(--bg);margin:14px 0}
+/* analyze */
+textarea.big{width:100%;min-height:380px;border:0;outline:0;resize:vertical;padding:20px 24px;font:17px/1.65 inherit;font-family:inherit;color:var(--ink);background:transparent;display:block}
+.bar{display:flex;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line);flex-wrap:wrap;align-items:center}
+.foot{display:flex;justify-content:space-between;padding:14px 24px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}
+.mode{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--bd);border-radius:10px;cursor:pointer}
+.mode:has(input:checked){border:2px solid var(--navy);padding:13px 15px}
+.mode input{width:20px;height:20px;accent-color:var(--navy)}
+.mode b{display:block;font-weight:500}.mode small{color:var(--muted);font-size:13px}
+.stack{display:flex;flex-direction:column;gap:24px}
+.stack12{display:flex;flex-direction:column;gap:12px}
+/* result */
+.verdict{display:flex;align-items:center;gap:40px;padding:26px 32px;flex-wrap:wrap}
+.verdict h2{font-size:36px;font-weight:600;letter-spacing:-.6px}
+.verdict .lab{font-size:14px;color:var(--muted);margin-bottom:6px}
+.meter{flex:1;min-width:260px}
+.meter .t{display:flex;justify-content:space-between;font-size:14px;font-weight:500;margin-bottom:10px}
+.meter .b{display:flex;height:16px;border-radius:8px;overflow:hidden;background:#E9E7DF}
+.legend{display:flex;gap:16px;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:14px;height:10px;margin-right:6px}
+.txt{padding:24px;font-size:17px;line-height:1.9}
+.s-ai{background:var(--ait);border-bottom:2px solid var(--ai);padding:1px 0}
+.s-hu{background:var(--humt);border-bottom:2px dotted var(--hum);padding:1px 0}
+.sc{padding:14px 0;border-bottom:1px solid var(--line)}.sc:last-child{border:0}
+.sc .l{display:flex;justify-content:space-between;margin-bottom:8px;font-weight:500}
+.track{height:8px;border-radius:4px;background:#E9E7DF}.track div{height:8px;border-radius:4px}
+.sig{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.sig:last-child{border:0}
+.sig i{width:8px;height:8px;border-radius:50%;margin-top:8px}
+.sig b{display:block;font-weight:500}.sig small{color:var(--muted);font-size:14px}
+/* report */
+.feat{display:flex;align-items:center;gap:16px;min-height:52px;border-bottom:1px solid var(--line)}.feat:last-child{border:0}
+.feat .n{flex:1.3;font-weight:500}.feat .v{width:64px;text-align:right}
+.scale{flex:1.4;position:relative;height:8px;border-radius:4px;background:linear-gradient(90deg,var(--humt),var(--mix),var(--ait))}
+.scale i{position:absolute;top:-5px;width:4px;height:18px;border-radius:2px;background:var(--ink)}
+.box{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border:1px solid var(--bd);border-radius:10px;gap:12px}
+.fin{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-radius:10px;font-weight:600}
+/* history */
+.filters{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.search{flex:1;min-width:220px;display:flex;align-items:center;gap:10px;height:48px;padding:0 16px;border:1px solid #BDBAAE;border-radius:10px;background:#fff;color:var(--muted)}
+.search input{flex:1;border:0;outline:0;background:transparent;font:16px inherit;font-family:inherit;color:var(--ink);min-width:0}
+.pill{display:inline-flex;align-items:center;height:40px;padding:0 18px;border-radius:20px;font-weight:500;background:#fff;border:1px solid var(--bd)}
+.pill.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.x{background:none;border:0;color:var(--muted);cursor:pointer;padding:6px;border-radius:8px}.x:hover{background:var(--bg)}
+/* settings */
+.set{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid var(--line)}
+.set small{display:block;color:var(--muted);font-size:14px}
+select,input[type=number]{height:40px;padding:0 12px;border:1px solid var(--bd);border-radius:10px;font:500 15px inherit;font-family:inherit;background:#fff}
+.stp{display:flex;gap:14px;margin-top:18px}.stp b{display:block;font-weight:500}.stp small{color:var(--muted);font-size:14px}
+.num{width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font:500 13px 'IBM Plex Mono',monospace;flex:none}
+/* auth + splash */
+.auth{display:flex;min-height:100vh}
+.auth .l{width:46%;background:var(--navy);color:#fff;padding:56px 64px;display:flex;flex-direction:column;justify-content:space-between;gap:32px}
+.auth .l h2{font-size:38px;line-height:1.15;font-weight:600;letter-spacing:-.8px;max-width:440px}
+.auth .l .st{display:flex;gap:16px;margin-top:22px}.auth .l .st b{display:block;font-weight:500;font-size:17px}.auth .l .st small{color:#B9C3D8;font-size:15px}
+.auth .l .n{width:32px;height:32px;border-radius:50%;border:1px solid #4A5A7E;display:flex;align-items:center;justify-content:center;font:14px 'IBM Plex Mono',monospace;flex:none}
+.auth .r{flex:1;display:flex;align-items:center;justify-content:center;background:var(--surf);padding:32px}
+.auth form{width:100%;max-width:420px;display:flex;flex-direction:column;gap:22px}
+.auth h1{font-size:32px;font-weight:600;letter-spacing:-.5px}
+label.f{display:flex;flex-direction:column;gap:8px;font-weight:500;font-size:14px}
+.in{display:flex;align-items:center;gap:10px;height:52px;padding:0 14px;border:1px solid #BDBAAE;border-radius:10px;background:#fff;color:var(--muted)}
+.in input{flex:1;border:0;outline:0;background:transparent;font:16px inherit;font-family:inherit;color:var(--ink);min-width:0}
+.in:focus-within{border-color:var(--navy);box-shadow:0 0 0 3px #14213D22}
+.demo{font-size:13px;color:var(--muted);text-align:center}
+.splash{min-height:100vh;background:var(--navy);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;text-align:center;padding:24px}
+.splash h1{font-size:48px;font-weight:600;letter-spacing:-1px}
+.splash p{font-size:18px;color:#C9D1E0;max-width:460px}
+.load{width:220px;height:4px;border-radius:2px;background:#2C3B5E;margin-top:28px;overflow:hidden}
+.load div{height:4px;background:#fff;width:0;animation:ld 2.4s ease forwards}
+@keyframes ld{to{width:100%}}
+.splash small{position:absolute;bottom:32px;color:#A9B4CA}
+@media(max-width:1100px){.side{width:92px;padding:20px 10px;align-items:center;gap:20px}.brand{padding:0;justify-content:center}.brand>div{display:none}.nav{width:100%;gap:8px}.nav a{flex-direction:column;justify-content:center;gap:6px;height:auto;min-height:64px;padding:10px 4px;font-size:11px;line-height:1.2;text-align:center}.me{padding:6px;border:0}.me>div:last-child{display:none}.main{padding:24px}}
+@media(max-width:900px){.grid2{grid-template-columns:1fr!important}.verdict{gap:20px}.auth .l{display:none}}
+@media(max-width:640px){.app{flex-direction:column-reverse}.side{position:fixed;bottom:0;left:0;right:0;top:auto;width:100%;height:auto;flex-direction:row;padding:6px 8px;border-right:0;border-top:1px solid var(--line);z-index:10;gap:0}.brand,.me{display:none}.nav{flex-direction:row;justify-content:space-around}.nav a{flex:1;min-height:56px}.main{padding:20px 16px 96px}.head h1{font-size:24px}}
+
+.mode.off{opacity:.6;cursor:default;border-style:dashed}.mode.off:has(input:checked){border:1px dashed var(--bd)}button.pill{font:500 15px inherit;font-family:inherit;cursor:pointer}
+body{min-height:100vh}
+
+</style></head><body><div id="app"></div>
+<script>
+const MODEL={"features": ["num_words", "avg_word_len", "avg_sentence_len", "sentence_len_std", "burstiness", "type_token_ratio", "hapax_ratio", "comma_ratio", "punct_ratio", "uppercase_ratio", "digit_ratio", "function_word_ratio", "transition_ratio", "contraction_ratio", "first_person_ratio", "question_exclaim_ratio", "repeated_bigram_ratio"], "mean": [47.888888888888886, 5.617578206424392, 9.809301587301594, 2.841946928603317, -0.5283214666616607, 0.8535534963791297, 0.7257448499116355, 0.07045089848184972, 0.03548752203913087, 0.020044733691929446, 0.0, 0.24796629921907087, 0.03798656560086442, 0.042465631149241095, 0.02570164526081641, 0.07363139329805996, 0.0600076076776346], "scale": [11.128785942015858, 0.8845790216922708, 2.5466580708351896, 1.1639363500165698, 0.22949031400765776, 0.09892997146504214, 0.17796444940043388, 0.026954225298825463, 0.015352196295450258, 0.010227599919887816, 1.0, 0.04007380659752043, 0.039860341528132295, 0.042446237667515055, 0.031703614335835704, 0.11179504691462315, 0.07220493056350213], "coef": [0.39773909212640435, 1.2138832440955163, 0.6119103425914361, -0.3777592910122699, -0.45483592558717745, -0.2544553494937067, -0.22298211764669038, 0.5706203208769939, -0.6010677078933461, -0.7890044763696853, 0.0, 0.07709959229010123, 1.3326647758791477, -0.9473768322581303, -0.9232276193748465, -0.2740757130085968, -0.23690004452144883], "intercept": -0.5986446978882294, "hum_mean": [41.42333333333333, 4.786162972670908, 7.883969817219819, 3.7102840359577187, -0.34437925775847783, 0.9112340849850092, 0.8286231193158696, 0.0698987349449519, 0.04792622060886598, 0.02845744712476338, 0.0, 0.24143783894325452, 0.0, 0.07908278535562818, 0.04915998002908306, 0.1468905723905724, 0.03575144160914482], "ai_mean": [54.56666666666667, 6.436840715140027, 11.774666666666665, 1.9989784098815362, -0.7125343620918033, 0.8041472251724522, 0.638180899853793, 0.07098695097127844, 0.022954122674725328, 0.011290058305187114, 0.0, 0.2522828924843996, 0.07600582874377748, 0.005745273809861635, 0.0016686065941126722, 0.0, 0.07708721304909452]};
+const FW=new Set("the a an and or but if of to in on at by for with from as is are was were be been it this that these those i you he she we they not no so than then there their his her its our your".split(/\s+/));
+const TR=["moreover","furthermore","additionally","consequently","therefore","overall","however","thus","notably","importantly","ultimately","in conclusion","in summary"];
+const FP=new Set(["i","me","my","mine","we","our"]);
+function countSub(s,t){return s.split(t).length-1}
+function splitSentences(text){const p=text.trim().split(/(?<=[.!?])\s+/).map(s=>s.trim()).filter(Boolean);return p}
+function extract(text){
+  const low=text.toLowerCase();
+  const words=low.match(/[A-Za-z']+/g)||[];
+  const n=Math.max(words.length,1);
+  let sents=splitSentences(text); if(!sents.length) sents=[text];
+  const sl=sents.map(s=>(s.match(/[A-Za-z']+/g)||[]).length);
+  const chars=Math.max([...text].length,1);
+  const counts=new Map(); for(const w of words) counts.set(w,(counts.get(w)||0)+1);
+  const bg=[]; for(let i=0;i+1<words.length;i++) bg.push(words[i]+"\u0000"+words[i+1]);
+  const repBi=(bg.length-new Set(bg).size)/Math.max(bg.length,1);
+  const mean=sl.reduce((a,b)=>a+b,0)/sl.length;
+  const std=Math.sqrt(sl.reduce((a,b)=>a+(b-mean)*(b-mean),0)/sl.length);
+  let upper=0,digit=0; for(const c of text){ if(c!==c.toLowerCase()&&c===c.toUpperCase()) upper++; if(/\p{Nd}/u.test(c)) digit++; }
+  let hap=0; for(const v of counts.values()) if(v===1) hap++;
+  const punct=(text.match(/[^\p{L}\p{N}_\s]/gu)||[]).length;
+  const contr=(low.match(/\b\w+'(?:t|s|m|re|ve|ll|d)\b/g)||[]).length;
+  return [
+    words.length,
+    words.length? words.reduce((a,w)=>a+[...w].length,0)/words.length:0,
+    mean,std,(std-mean)/(std+mean+1e-9),
+    counts.size/n,hap/n,
+    countSub(text,",")/n,
+    punct/chars, upper/chars, digit/chars,
+    words.filter(w=>FW.has(w)).length/n,
+    TR.reduce((a,t)=>a+countSub(low,t),0)/n,
+    contr/n,
+    words.filter(w=>FP.has(w)).length/n,
+    (countSub(text,"?")+countSub(text,"!"))/Math.max(sents.length,1),
+    repBi
+  ];
+}
+function pAI(text){
+  const f=extract(text); let z=MODEL.intercept;
+  for(let i=0;i<f.length;i++) z+=(f[i]-MODEL.mean[i])/MODEL.scale[i]*MODEL.coef[i];
+  return 1/(1+Math.exp(-z));
+}
+
+const $app=document.getElementById('app');
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const mem={};
+const lsGet=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return k in mem?mem[k]:d}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){mem[k]=v}};
+const IC={home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',scan:'<path d="M4 7V5a1 1 0 0 1 1-1h2M17 4h2a1 1 0 0 1 1 1v2M20 17v2a1 1 0 0 1-1 1h-2M7 20H5a1 1 0 0 1-1-1v-2"/><path d="M8 9h8M8 12h8M8 15h5"/>',history:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/>',settings:'<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',upload:'<path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>',file:'<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/>',check:'<path d="M5 12l5 5 9-10"/>',search:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/>',arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',logout:'<path d="M10 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h5M15 8l4 4-4 4M19 12H9"/>',plus:'<path d="M12 5v14M5 12h14"/>',trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>'};
+const ic=(n,s=20)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]}</svg>`;
+const mark=(s=34,bg='#14213D',fg='#fff')=>`<svg width="${s}" height="${s}" viewBox="0 0 32 32" role="img" aria-label="Veritext logo"><rect width="32" height="32" rx="8" fill="${bg}"/><path d="M9 11l7 11 7-11" fill="none" stroke="${fg}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="8.5" r="2.6" fill="#B8501A"/></svg>`;
+const VL={ai:'AI-generated',hu:'Human-written',mix:'Mixed'};
+const chip=v=>`<span class="chip ${v}">${VL[v]}</span>`;
+const FL={avg_sentence_len:'Avg sentence length',burstiness:'Burstiness',type_token_ratio:'Vocabulary richness',transition_ratio:'Formal linking words',contraction_ratio:'Contractions',first_person_ratio:'First-person words',repeated_bigram_ratio:'Repeated phrases'};
+const AIM={avg_sentence_len:['Very even sentence length','Sentences are long and regular.'],burstiness:['Very uniform rhythm','Little variation between sentences.'],type_token_ratio:['Narrow vocabulary','Words are repeated more than usual.'],transition_ratio:['Many formal linking words','Moreover, Furthermore, In conclusion.'],contraction_ratio:['No contractions','Humans usually write don’t, it’s, I’m.'],first_person_ratio:['No personal voice','Few words like I, my, we.'],repeated_bigram_ratio:['Repeated phrasing','Similar word pairs come back often.']};
+const HUM={avg_sentence_len:['Varied sentence length','Short and long sentences are mixed.'],burstiness:['Natural rhythm','Sentence length changes a lot.'],type_token_ratio:['Rich vocabulary','Many different words are used.'],transition_ratio:['Few formal linking words','Reads less like a formal essay.'],contraction_ratio:['Uses contractions','Casual forms like don’t and it’s.'],first_person_ratio:['Personal voice','Words like I and my appear.'],repeated_bigram_ratio:['Little repetition','Phrases are not reused.']};
+const SAMPLE_AI="It is important to note that renewable energy plays a crucial role in modern society. Moreover, solar power contributes significantly to the overall outcome. Furthermore, wind energy can have a profound impact on individuals and communities alike. Consequently, understanding energy policy is vital for making informed decisions. In conclusion, a balanced approach is necessary to ensure positive results for everyone.";
+const SAMPLE_HU="Honestly I don't really get why everyone is so obsessed with solar panels. My uncle put some on his roof last year and the bills dropped a lot, so ok, he's got a point. We argued about it for like an hour lol. Anyway, that's my two cents.";
+const S={user:lsGet('vt_user',null),hist:lsGet('vt_hist',[]),cur:null,draft:'',q:'',f:'all',flash:''};
+const verdict=(p,t)=>p>=t+.15?'ai':p<t-.15?'hu':'mix';
+const thr=()=>(S.user&&S.user.thr||50)/100;
+const initials=n=>n.split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase()||'U';
+function when(iso){const d=new Date(iso),days=Math.floor((new Date().setHours(0,0,0,0)-new Date(d).setHours(0,0,0,0))/864e5);return days<=0?'Today':days===1?'Yesterday':days<7?days+' days ago':d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}
+function analyze(text){
+  const p=pAI(text),f=extract(text);
+  const segs=splitSentences(text).map(s=>({text:s,ai:pAI(s)>=.5}));
+  const feats=Object.keys(FL).map(k=>{const i=MODEL.features.indexOf(k),h=MODEL.hum_mean[i],a=MODEL.ai_mean[i];const pos=a===h?.5:Math.min(1,Math.max(0,(f[i]-h)/(a-h)));return{k,label:FL[k],value:f[i].toFixed(2),pos:Math.round(pos*100)}});
+  const signals=[...feats].sort((x,y)=>Math.abs(y.pos-50)-Math.abs(x.pos-50)).slice(0,3).map(x=>{const m=(x.pos>=50?AIM:HUM)[x.k];return{ai:x.pos>=50,title:m[0],desc:m[1]}});
+  return{p,segs,feats,signals,words:(text.match(/\S+/g)||[]).length};
+}
+const NAV=[['home','home','Dashboard'],['analyze','scan','New analysis'],['history','history','History'],['preferences','settings','Settings & About']];
+const shell=(act,head,sub,acts,body)=>`<div class="app"><aside class="side"><div class="brand">${mark(34)}<div><b>Veritext</b><small>AI text detection</small></div></div><nav class="nav">${NAV.map(([r,i,l])=>`<a href="#${r}" class="${act===r?'on':''}">${ic(i)}${esc(l)}</a>`).join('')}</nav><div class="me"><div class="av">${esc(initials(S.user.name))}</div><div><div style="font-weight:500">${esc(S.user.name)}</div><div class="muted" style="font-size:13px">Student</div></div></div></aside><main class="main">${S.flash?`<div class="flash" role="alert">${esc(S.flash)}</div>`:''}<div class="head"><div><h1>${head}</h1><p>${sub}</p></div><div class="acts">${acts||''}</div></div>${body}</main></div>`;
+const V={};
+V.splash=()=>`<div class="splash">${mark(88,'#fff','#14213D')}<h1>Veritext</h1><p>Find out whether a text was written by a person or by AI.</p><div class="load"><div></div></div><small>Generative AI &amp; NLP project &middot; Athrav Singh</small></div>`;
+V.signin=()=>`<div class="auth"><section class="l"><div class="brand">${mark(36,'#fff','#14213D')}<b style="font-size:22px">Veritext</b></div><div><h2>Human or AI? Get a clear answer in seconds.</h2>${[['Read the text','You paste or upload any essay or article.'],['Measure two things','Writing style, and deeper language patterns.'],['Combine and decide','Both results are fused into one verdict.']].map((x,i)=>`<div class="st"><div class="n">${i+1}</div><div><b>${x[0]}</b><small>${x[1]}</small></div></div>`).join('')}</div><small style="color:#A9B4CA">Stylometric and transformer-based feature fusion</small></section><section class="r"><form id="login"><div><h1>Sign in</h1><p class="muted" style="margin-top:6px">Welcome back. Enter your details to continue.</p></div><label class="f">Name<span class="in">${ic('file')}<input name="name" placeholder="Your name" value="Athrav Singh" required></span></label><label class="f">Email<span class="in">${ic('mail')}<input type="email" name="email" placeholder="name@college.edu" required></span></label><label class="f">Password<span class="in">${ic('lock')}<input type="password" name="pw" placeholder="Enter your password" required></span></label><button class="btn big" type="submit">Sign in ${ic('arrow',18)}</button><div class="demo">Demo sign-in: any email and password works. Your data stays in this browser only.</div></form></section></div>`;
+V.home=()=>{const h=S.hist,ai=h.filter(r=>r.verdict==='ai').length,conf=h.length?Math.round(100*h.reduce((a,r)=>a+Math.max(r.p,1-r.p),0)/h.length):0;
+ return shell('home',`Welcome back, ${esc(S.user.name.split(' ')[0])}`,'Check a text or open one of your recent results.',`<a class="btn" href="#analyze">${ic('plus',18)}New analysis</a>`,
+ `<div class="grid2"><div class="card pad"><div class="ct">Check a text</div><div class="drop">Paste an essay, article or any passage to see if it reads as human or AI.</div><div class="acts" style="justify-content:space-between"><div class="acts"><a class="btn s" href="#analyze">Paste text</a><a class="btn s" href="#analyze">${ic('upload',18)}Upload file</a></div><a class="btn" href="#analyze">Analyze text ${ic('arrow',18)}</a></div></div><div class="card pad"><div class="ct" style="margin-bottom:4px">Your activity</div><div class="stat"><span class="muted">Texts checked</span><b>${h.length}</b></div><div class="stat"><span class="muted">Flagged as AI</span><b>${ai}</b></div><div class="stat"><span class="muted">Average confidence</span><b>${conf}%</b></div></div></div>
+ <div class="card"><div class="row" style="min-height:62px"><span class="ct" style="flex:1">Recent checks</span><a href="#history" style="color:var(--humd);font-weight:500">View all</a></div>${h.slice(0,4).map(r=>`<a class="row" href="#result" data-open="${r.id}"><div class="c1">${ic('file',18)}<span>${esc(r.title)}</span></div><div class="c2">${r.source}</div><div class="c3">${chip(r.verdict)}</div><div class="c4" style="text-align:right">${when(r.created)}</div></a>`).join('')||'<div class="row muted" style="min-height:80px">No checks yet. Run your first analysis above.</div>'}</div>`)};
+V.analyze=()=>shell('analyze','New analysis','Paste or upload the text you want to check.','',
+ `<div class="grid2"><div class="card" style="display:flex;flex-direction:column"><div class="bar"><label class="btn s" style="height:40px;cursor:pointer">${ic('upload',18)}Upload .txt<input type="file" id="file" accept=".txt,text/plain" hidden></label><button type="button" class="btn s" style="height:40px" id="clear">${ic('trash',18)}Clear</button><button type="button" class="btn s" style="height:40px" id="sAI">Try AI sample</button><button type="button" class="btn s" style="height:40px" id="sHU">Try human sample</button></div><textarea class="big" id="text" aria-label="Text to analyze" placeholder="Paste your text here...">${esc(S.draft)}</textarea><div class="foot"><span>Plain text files supported</span><span class="mono" id="wc">0 words</span></div></div>
+ <div class="stack"><div class="card pad stack12"><div class="ct" style="margin-bottom:2px">Detection mode</div><label class="mode"><input type="radio" name="mode" checked><span><b>Stylometric model</b><small>Your trained model, running in this page</small></span></label><div class="mode off"><span><b>Transformer / Fusion</b><small>Available in the Python app (needs DistilBERT + GPT-2)</small></span></div></div><div class="card pad" style="display:flex;justify-content:space-between"><b style="font-weight:500">Language</b><span class="muted">English</span></div><button class="btn big" id="go">${ic('scan',20)}Analyze text</button></div></div>`);
+V.result=()=>{const r=S.cur;if(!r)return null;const a=analyze(r.text),p=Math.round(r.p*100);const col={ai:'var(--aid)',hu:'var(--humd)',mix:'var(--mixd)'}[r.verdict];
+ return shell('analyze','Analysis result',`${esc(r.title)} &middot; ${a.words} words`,`<a class="btn s" href="#history">${ic('check',18)}Saved in history</a><a class="btn" href="#report">View full report ${ic('arrow',18)}</a>`,
+ `<div class="card verdict"><div><div class="lab">Verdict</div><h2 style="color:${col}">${{ai:'Likely AI-generated',hu:'Likely human-written',mix:'Mixed signals'}[r.verdict]}</h2></div><div class="meter"><div class="t"><span style="color:var(--humd)">Human ${100-p}%</span><span style="color:var(--aid)">AI ${p}%</span></div><div class="b"><div style="width:${100-p}%;background:var(--hum)"></div><div style="width:${p}%;background:var(--ai)"></div></div><div class="muted" style="margin-top:10px;font-size:13px">Score from the stylometric model.</div></div></div>
+ <div class="grid2"><div class="card"><div class="row" style="min-height:58px"><span class="ct" style="flex:1">Analyzed text</span><span class="legend"><span><i class="s-ai"></i>AI-like</span><span><i class="s-hu"></i>Human-like</span></span></div><div class="txt">${a.segs.map(s=>`<span class="${s.ai?'s-ai':'s-hu'}">${esc(s.text)}</span> `).join('')}</div></div>
+ <div class="stack"><div class="card pad"><div class="ct">Model scores (AI probability)</div><div class="sc"><div class="l"><span>Stylometric</span><span class="mono">${p}%</span></div><div class="track"><div style="width:${p}%;background:var(--ai)"></div></div></div><div class="sc"><div class="l"><span class="muted">Transformer</span><span class="muted">Python app</span></div></div><div class="sc"><div class="l"><span class="muted">Fusion</span><span class="muted">Python app</span></div></div></div>
+ <div class="card pad"><div class="ct">Main signals</div>${a.signals.map(s=>`<div class="sig"><i style="background:${s.ai?'var(--ai)':'var(--hum)'}"></i><div><b>${esc(s.title)}</b><small>${esc(s.desc)}</small></div></div>`).join('')}</div></div></div>`)};
+V.report=()=>{const r=S.cur;if(!r)return null;const a=analyze(r.text),p=Math.round(r.p*100);const bg={ai:'var(--ait)',hu:'var(--humt)',mix:'var(--mix)'}[r.verdict],fg={ai:'var(--aid)',hu:'var(--humd)',mix:'var(--mixd)'}[r.verdict];
+ return shell('analyze','Detailed report',`Why Veritext reached this verdict &middot; ${esc(r.title)}`,`<button class="btn s" id="copyrep">${ic('copy',18)}Copy summary</button><a class="btn" href="#home">${ic('check',18)}Done</a>`,
+ `<div class="grid2" style="grid-template-columns:1.5fr 1fr"><div class="card pad"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap"><span class="ct">Stylometric signals</span><span class="muted" style="font-size:13px">Human-like &larr; this text &rarr; AI-like</span></div><div style="margin-top:8px">${a.feats.map(f=>`<div class="feat"><div class="n">${f.label}</div><div class="v mono">${f.value}</div><div class="scale"><i style="left:${f.pos}%"></i></div></div>`).join('')}</div></div>
+ <div class="stack"><div class="card pad stack12"><div class="ct">Transformer signals</div><div class="box"><b style="font-weight:500">DistilBERT + GPT-2</b><span class="mono muted" style="font-size:13px">Python app only</span></div></div><div class="card pad stack12"><div class="ct">Final result</div><div class="box"><b style="font-weight:500">Stylometric score</b><span class="mono">${p}%</span></div><div class="fin" style="background:${bg};color:${fg}"><span>Final: ${VL[r.verdict]}</span><span class="mono" style="font-size:20px">${p}% AI</span></div></div></div></div>`)};
+V.history=()=>{const rows=S.hist.filter(r=>(!S.q||r.title.toLowerCase().includes(S.q.toLowerCase()))&&(S.f==='all'||r.verdict===S.f));
+ return shell('history','History','Every text you have checked.','',`<div class="filters"><label class="search">${ic('search')}<input type="search" id="q" value="${esc(S.q)}" placeholder="Search your checks" aria-label="Search your checks"></label>${[['all','All'],['ai','AI-generated'],['hu','Human-written'],['mix','Mixed']].map(([k,l])=>`<button class="pill ${S.f===k?'on':''}" data-f="${k}">${l}</button>`).join('')}</div>
+ <div class="card"><div class="row th"><div class="c1">TEXT</div><div class="c2">SOURCE</div><div class="c3">VERDICT</div><div class="c4">AI SCORE</div><div class="c4">DATE</div><div style="width:40px"></div></div>${rows.map(r=>`<div class="row"><a class="c1" href="#result" data-open="${r.id}">${ic('file',18)}<span>${esc(r.title)}</span></a><div class="c2">${r.source}</div><div class="c3">${chip(r.verdict)}</div><div class="c4 mono" style="color:var(--ink)">${Math.round(r.p*100)}%</div><div class="c4">${when(r.created)}</div><button class="x" data-del="${r.id}" aria-label="Delete ${esc(r.title)}">${ic('trash',18)}</button></div>`).join('')||'<div class="row muted" style="min-height:90px">Nothing here yet.</div>'}</div>`)};
+V.preferences=()=>shell('preferences','Settings &amp; About','Preferences and project information.','',
+ `<div class="grid2" style="grid-template-columns:1fr 1.15fr"><form id="prefs" class="card pad" style="display:flex;flex-direction:column"><div style="display:flex;align-items:center;gap:16px;padding-bottom:18px;border-bottom:1px solid var(--line)"><div class="av" style="width:56px;height:56px;font-size:18px">${esc(initials(S.user.name))}</div><div><div style="font-size:18px;font-weight:600">${esc(S.user.name)}</div><div class="muted">Student</div></div></div><div class="set"><div><b style="font-weight:500">Display name</b><small>Shown in the menu</small></div><input name="name" value="${esc(S.user.name)}" aria-label="Display name" style="height:40px;padding:0 12px;border:1px solid var(--bd);border-radius:10px;font:500 15px inherit;width:170px"></div><div class="set"><div><b style="font-weight:500">AI threshold (%)</b><small>Centre point between human and AI (30 to 70)</small></div><input type="number" name="thr" min="30" max="70" value="${S.user.thr||50}" aria-label="AI threshold" style="width:90px"></div><div style="display:flex;gap:12px;margin-top:24px"><button class="btn" type="submit">${ic('check',18)}Save settings</button><button type="button" class="btn s" id="out">${ic('logout',18)}Sign out</button></div></form>
+ <div class="card pad"><div style="display:flex;align-items:center;gap:14px">${mark(44)}<div><div class="muted" style="font-size:12px;font-weight:500;letter-spacing:.6px">ABOUT THIS PROJECT</div><div style="font-size:19px;font-weight:600;line-height:1.25">AI-Generated Text Detection Using Stylometric and Transformer-Based Feature Fusion</div></div></div><div style="display:flex;gap:32px;font-size:14px;margin:20px 0;flex-wrap:wrap"><div><div class="muted">Domain</div><b style="font-weight:500">Generative AI &amp; NLP</b></div><div><div class="muted">Student</div><b style="font-weight:500">Athrav Singh</b></div><div><div class="muted">This page runs</div><b style="font-weight:500">Stylometric model</b></div></div><div style="height:1px;background:var(--line)"></div>${[['Stylometric features','Sentence length, vocabulary, punctuation and formal linking words.'],['Transformer features','DistilBERT embeddings and GPT-2 predictability (Python app).'],['Feature fusion','Both are combined and a classifier gives Human or AI (Python app).']].map((x,i)=>`<div class="stp"><div class="num">${i+1}</div><div><b>${x[0]}</b><small>${x[1]}</small></div></div>`).join('')}</div></div>`);
+let splashTimer=null;
+function route(){
+  clearTimeout(splashTimer);
+  let r=(location.hash||'').slice(1)||'splash';
+  if(r==='splash'){$app.innerHTML=V.splash();splashTimer=setTimeout(()=>{location.hash=S.user?'home':'sign-in'},2300);return}
+  if(r==='sign-in'){if(S.user){location.hash='home';return}$app.innerHTML=V.signin();return}
+  if(!S.user){location.hash='sign-in';return}
+  if(!V[r]){location.hash='home';return}
+  const html=V[r]();if(html===null){location.hash='home';return}
+  $app.innerHTML=html;S.flash='';window.scrollTo(0,0);bind(r);
+}
+function bind(r){
+  if(r==='analyze'){const t=document.getElementById('text'),wc=document.getElementById('wc');const c=()=>{S.draft=t.value;wc.textContent=((t.value.trim().match(/\S+/g)||[]).length)+' words'};t.addEventListener('input',c);c();
+   document.getElementById('clear').onclick=()=>{t.value='';c()};document.getElementById('sAI').onclick=()=>{t.value=SAMPLE_AI;c()};document.getElementById('sHU').onclick=()=>{t.value=SAMPLE_HU;c()};
+   let up=null;document.getElementById('file').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{t.value=String(rd.result);up=f.name;t.dataset.name=f.name;c()};rd.readAsText(f)};
+   document.getElementById('go').onclick=()=>{const text=t.value.trim();if((text.match(/\S+/g)||[]).length<8){S.flash='Please enter at least 8 words so the result is meaningful.';route();return}
+    const p=pAI(text),src=t.dataset.name?'Uploaded':'Pasted',title=t.dataset.name||text.split(/\s+/).slice(0,5).join(' ')+'...';
+    const rec={id:Date.now(),title,source:src,text,p,verdict:verdict(p,thr()),created:new Date().toISOString()};S.hist.unshift(rec);lsSet('vt_hist',S.hist);S.cur=rec;S.draft='';location.hash='result'}}
+  if(r==='history'){document.getElementById('q').oninput=e=>{S.q=e.target.value;const pos=e.target.selectionStart;route();const q=document.getElementById('q');q.focus();q.setSelectionRange(pos,pos)};
+   document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{S.f=b.dataset.f;route()});
+   document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{S.hist=S.hist.filter(x=>x.id!=b.dataset.del);lsSet('vt_hist',S.hist);route()})}
+  if(r==='report'){document.getElementById('copyrep').onclick=()=>{const x=S.cur,a=analyze(x.text);const txt=`Veritext report\n${x.title}\nVerdict: ${VL[x.verdict]} (${Math.round(x.p*100)}% AI)\n`+a.feats.map(f=>`${f.label}: ${f.value}`).join('\n');try{navigator.clipboard.writeText(txt).then(()=>{S.flash='Summary copied.';route()}).catch(()=>{})}catch(e){}}}
+  if(r==='preferences'){document.getElementById('prefs').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);S.user.name=(f.get('name')||'').trim()||S.user.name;S.user.thr=Math.min(70,Math.max(30,parseInt(f.get('thr'))||50));lsSet('vt_user',S.user);S.flash='Settings saved.';route()};
+   document.getElementById('out').onclick=()=>{S.user=null;lsSet('vt_user',null);location.hash='sign-in'}}
+  document.querySelectorAll('[data-open]').forEach(a=>a.addEventListener('click',()=>{S.cur=S.hist.find(x=>x.id==a.dataset.open)}));
+}
+document.addEventListener('submit',e=>{if(e.target.id==='login'){e.preventDefault();const f=new FormData(e.target);S.user={name:(f.get('name')||'').trim()||'Athrav Singh',thr:50};lsSet('vt_user',S.user);location.hash='home'}});
+window.addEventListener('hashchange',route);route();
+
+</script></body></html>
