@@ -54,3 +54,17 @@ No internet / no torch?  Run with  VERITEXT_FALLBACK=1 python app.py   (Windows:
 - `src/` - stylometric features, transformer features, fusion model
 - `online/index.html` - single-page browser version (runs the stylometric model, no server needed)
 - `samples/` - one AI-written and one human-style sample text (PDF and TXT)
+
+## Email OTP sign-in (Brevo)
+
+The hosted website signs users in with a 6-digit code sent by email through Brevo.
+Serverless functions: `api/send-otp.js` and `api/verify-otp.js`.
+Add these Environment Variables in Vercel (Project > Settings > Environment Variables), then redeploy:
+
+| Name | Value |
+| --- | --- |
+| `BREVO_API_KEY` | API key from Brevo (SMTP & API > API Keys) |
+| `BREVO_SENDER_EMAIL` | A sender address verified in Brevo (Senders & IP) |
+| `OTP_SECRET` | Any long random string |
+
+Without the functions (Android app, local file) the app falls back to a device-only sign-in.
